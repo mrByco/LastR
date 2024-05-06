@@ -17,18 +17,28 @@ cat("reszveny=",ar[ai+1],"\n")
 set.seed(ss)
 
 nx=700
-v=matrix(c(ax,abs(ax-ay),abs(ax-ay),ay),2)
+v=matrix(c(ax, abs(ax-ay), abs(ax-ay), ay),2)
 w=chol(v)
 z1=sqrt(-2*log(runif(nx)))*sin(runif(nx)*2*pi)
 z2=sqrt(-2*log(runif(nx)))*cos(runif(nx)*2*pi)
 zm=matrix(c(z1,z2),ncol=2)
 zn=5*zm%*%w
 
+library(ggpubr)
+
+ggdensity(zm[,1])
+ggdensity(zn[,2])
+
+library(car)
+qqPlot(zn)
+
+
 summary(zn)
 
+print("================ COR =======================")
 cor(zn)
 library(moments)
-
+print("================ COR TEST =======================")
 cor.test(zn[,1],zn[,2])
 
 a = c(49, 90, 71, 92, 4, 24, 46, 50, 48, 18, 33, 9, 73, 63, 90, 87, 82, 19, 7, 43, 75, 26, 4, 71, 47, 4, 63, 22, 29, 47, 90, 33, 82, 76, 94, 61, 24, 7, 9, 13, 26, 89, 58, 12, 89, 66, 32, 90, 22, 75, 8, 95, 99, 7, 83, 63, 67, 2, 81, 1, 28, 44, 23, 69, 16, 46, 89, 54, 21, 64, 83, 12, 88, 22, 6, 85, 38, 45, 90, 13, 99, 4, 69, 83, 26, 70, 60, 61, 15, 51, 48, 77, 84, 13, 49, 88, 45, 93, 60, 31)
@@ -59,12 +69,35 @@ rho <- -0.7
 mean <- c(ax, ay)
 print(mean)
 cov_matrix <- matrix(c(av^2, rho * av * az, rho * av * az, az^2), ncol = 2)
+
 library(MASS)
 data <- mvrnorm(n = nx, mu = mean, Sigma = cov_matrix)
 x <- data[, 1]
 y <- data[, 2]
 
 plot(x, y, xlab = "X", ylab = "Y", main = "Exponential Distribution", pch = 16, col = "blue")
+
+
+corr_matrix = matrix(c(1, rho, rho, 1), nrow = 2)
+
+#print("================ COR =======================")
+#cor(zn)
+#print("================ COV MATRIX =======================")
+#cov_matrix
+#print("================ COR MATRIX =======================")
+#corr_matrix
+#print("================ FEGYO MINTA =======================")
+#zn
+#print("================ SAJAT MINTA REALIZACIO =======================")
+#data
+
+sample_data = mvrnorm(nx, mu = c(0, 0), Sigma = corr_matrix)
+
+print("================ ESZTER MINTA REALIZACIO =======================")
+sample_data
+
+ 
+plot(sample_data, main = "Exponenciális eloszlású mintarealizáció", xlab = "X", ylab = "Y")
 
 print("3 Feladat")
 
@@ -169,3 +202,27 @@ set.seed(ss + 37)
 plot(gbm(0.05, 0.2, 100), type='l')
 set.seed(ss + 37)
 plot(gbm(0.05, 0.2, 100), type='l')
+
+
+print("Poison distribution generation")
+
+set.seed(ss+17)  # set seed
+lambda <- 2  # expected rate
+
+# Generate Poisson process
+T <- 1000  # time interval
+n <- rpois(T, lambda)
+
+# Convert to cumulative sum for staircase plot
+n_cumsum <- cumsum(n)
+
+# Staircase plot of the Poisson process
+plot(0:T, c(0, n_cumsum), type="s", xlab="Time", ylab="Number of Events", main="Poisson Process")
+
+
+ggdensity(n)
+
+
+plot(n, type="s", xlab="Time", ylab="Number of Events", main="Poisson Process")
+expected_events <- sum(n) / length(n)
+cat("Expected number of events:", expected_events, "\n")

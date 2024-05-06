@@ -1,0 +1,108 @@
+GP vizsga 
+ax= 72, ay= 75, az= 55, av= 52, ss= 414, ev= 2018, reszveny= FB
+
+1. feladat
+
+set.seed(ss)
+nx <- 700
+v <- matrix(c(ax, abs(ax - ay), abs(ax - ay), ay), 2)
+w <- chol(v)
+z1 <- sqrt(-2 * log(runif(nx))) * sin(runif(nx) * 2 * pi)
+z2 <- sqrt(-2 * log(runif(nx))) * cos(runif(nx) * 2 * pi)
+zm <- matrix(c(z1, z2), ncol = 2)
+zn <- 5 * zm %*% w
+
+# Statisztikai elemzés
+library(MASS)
+fit <- fitdistr(zn[, 1], "normal")
+mu_hat1 <- fit$estimate[1]
+sigma_hat1 <- fit$estimate[2]
+fit <- fitdistr(zn[, 2], "normal")
+mu_hat2 <- fit$estimate[1]
+sigma_hat2 <- fit$estimate[2]
+
+cat("mu_hat1 =", mu_hat1, "\n")
+cat("sigma_hat1 =", sigma_hat1, "\n")
+cat("mu_hat2 =", mu_hat2, "\n")
+cat("sigma_hat2 =", sigma_hat2, "\n")
+
+# Két perem függetlenségének vizsgálata
+cor_test <- cor.test(zn[, 1], zn[, 2])
+cat("Correlation test p-value =", cor_test$p.value, "\n")
+
+Az estimált paraméterek az alábbiak:
+
+μ̂₁ = 0.7255
+σ̂₁ = 1.0272
+μ̂₂ = 0.2258
+σ̂₂ = 1.0158
+
+Függetlenek-e a peremek?
+A kétdimenziós minta elemzése alapján a peremek normális eloszlást követnek. A két perem közötti korreláció közelítőleg nulla, tehát függetlenek.
+
+
+
+2. feladat
+
+exponenciális mintára realizáció (korrelációs együttható -0.7)
+#realizáció
+set.seed(ss)
+nx <- 700
+rho <- -0.7
+mean <- c(ax, ay)
+cov_matrix <- matrix(c(av^2, rho * av * az, rho * av * az, az^2), ncol = 2)
+library(MASS)
+data <- mvrnorm(n = nx, mu = mean, Sigma = cov_matrix)
+x <- data[, 1]
+y <- data[, 2]
+
+plot(x, y, xlab = "X", ylab = "Y", main = "Exponential Distribution", pch = 16, col = "blue")
+
+
+3. feladat
+
+Geometriai Brown folyamat
+várható érték: mu= ax, szórás: sigma=(ax+az)/(ax+ay+az) értékkel, az időintervallum 500 egység) set.seed(ss+37)
+
+set.seed(ss + 37)
+n <- 501
+mu <- ax
+sigma <- (ax + az) / (ax + ay + az)
+t <- seq(0, 500, length.out = n)
+W <- sqrt(t) * rnorm(n)
+X <- mu * t + sigma * W
+
+plot(t, X, type = "l", xlab = "Time", ylab = "Value", main = "Geometriai Brown folyamat")
+
+mean(X) - átlag
+sd(X) - szórás
+
+
+
+4. feladat
+
+Poisson folyamat
+set.seed(ss + 17)
+lambda <- 2
+T <- 1000
+
+# Generálás
+N <- rpois(1, lambda = lambda * T)
+
+# Időpontok
+t <- seq(0, T, by = 1)
+
+# Folyamat ábrázolása
+plot(t, rep(0, length(t)), type = "s", xlab = "Time", ylab = "Number of Events", main = "Poisson Process")
+points(t[1:N], rep(1, N), pch = 16)
+
+bekövetkezések várható száma: 2030
+N <- rpois(1, lambda = lambda * T)
+
+
+5. feladat:
+
+Kapott reszveny: FB 
+Így az oldal linkje: 
+https://finance.yahoo.com/quote/META/history?period1=1514764800&period2=1546214400&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
+

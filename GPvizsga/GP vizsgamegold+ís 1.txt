@@ -1,0 +1,128 @@
+GP vizsgamegoldás 1
+
+x="hk74ce";#neptun kód
+z=charToRaw(iconv(x, "latin1", "UTF-8"))
+for (i in 1:6) v=paste("0x",z,sep="")
+e=strtoi(v)
+ax=e[1];ay=e[2];az=e[3];av=e[4];ss=sum(strtoi(v))+24
+cat("ax=",ax,"\n")
+cat("ay=",ay,"\n")
+cat("az=",az,"\n")
+cat("av=",av,"\n")
+cat("ss=",ss,"\n")
+ar=c( "FB","AAPL","AMZN","GOOG","NFLX","TSLA")
+ai=ss-6*floor(ss/6)
+ev=2022-(ss-10*floor(ss/10))
+cat("ev=",ev,"\n")
+cat("reszveny=",ar[ai+1],"\n")
+
+ax= 104, ay= 107, az= 55, av= 52, ss= 542, ev= 2020, reszveny= AMZN
+
+1. feladat:
+
+set.seed(ss)
+nx <- 700
+v <- matrix(c(ax, abs(ax-ay), abs(ax-ay), ay), 2)
+w <- chol(v)
+z1 <- sqrt(-2*log(runif(nx))) * sin(runif(nx)*2*pi)
+z2 <- sqrt(-2*log(runif(nx))) * cos(runif(nx)*2*pi)
+zm <- matrix(c(z1, z2), ncol=2)
+zn <- 5 * zm %*% w
+
+# Statisztikai elemzés
+mean_x <- mean(zn[, 1])
+mean_y <- mean(zn[, 2])
+var_x <- var(zn[, 1])
+var_y <- var(zn[, 2])
+cov_xy <- cov(zn[, 1], zn[, 2])
+cor_xy <- cor(zn[, 1], zn[, 2])
+
+# Kiíratás
+cat("A két perem várható értékei:\n")
+cat("x =", mean_x, "\n")
+cat("y =", mean_y, "\n\n")
+cat("A két perem szórásai:\n")
+cat("x =", sqrt(var_x), "\n")
+cat("y =", sqrt(var_y), "\n\n")
+cat("A két perem kovarianciája:\n")
+cat("cov(x, y) =", cov_xy, "\n\n")
+cat("A két perem korrelációja:\n")
+cat("cor(x, y) =", cor_xy, "\n")
+
+A két perem várható értékei: x= -1,014521; y= 2.884586
+A két perem szórásai: x = 50.17655; y = 51.52481
+A két perem kovarianciája: x, y = 35.08278
+A két perem korrelációja: 0.0135699
+két perem átlaga: 09350325
+
+Függetlenek-e?
+Az elemzés alapján a két perem nem tűnik függetlennek, mivel a kovariancia nem nulla.
+
+
+
+2. feladat
+
+
+set.seed(ss)
+
+correlation = -0.7  # Korrelációs együttható
+
+# Exponenciális eloszlású minták generálása
+x = rexp(nx)
+y = rexp(nx)
+
+# Korrelációs mátrix létrehozása
+cor_matrix = matrix(c(1, correlation, correlation, 1), ncol = 2)
+
+# Minták korrelációval való beállítása
+sample = cbind(x, y) %*% chol(cor_matrix)
+
+# Ábrázolás
+plot(sample, main = "Exponenciális eloszlású mintarealizáció", xlab = "X", ylab = "Y")
+
+
+
+3. feladat
+
+Geometriai Brown folyamat
+n <- 501
+mu <- ax
+sigma <- (ax + az) / (ax + ay + az)
+t <- seq(0, 500, length.out = n)
+W <- sqrt(t) * rnorm(n)
+X <- mu * t + sigma * W
+
+plot(t, X, type = "l", xlab = "Time", ylab = "Value", main = "Geometriai Brown folyamat")
+
+mean(X) - átlag
+sd(X) - szórás
+
+
+
+4. feladat
+
+Poisson folyamat
+set.seed(ss + 17)  # Determinisztikus eredmények érdekében
+
+time_interval = 1000
+lambda = 2
+
+# Folyamat inicializálása
+poisson_sample <- numeric(time_interval)
+
+# Folyamat generálása
+for (i in 1:time_interval) {
+  poisson_sample[i] <- rpois(1, lambda)
+}
+
+# Ábrázolás
+plot(poisson_sample, type = "l", main = "Poisson folyamat", xlab = "Idő", ylab = "Bekövetkezések száma")
+
+# Várható számítása
+expected_count <- mean(poisson_sample)
+cat("Bekövetkezések várható száma:", expected_count, "\n")
+
+Bekövetkezések várható száma: 2.002
+
+5. feladat:
+https://finance.yahoo.com/quote/AMZN/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true

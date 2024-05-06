@@ -1,0 +1,70 @@
+0.FELADAT
+ax = 113 ,	ay = 116 , 	az = 102 ,	av = 108 ,	ss = 569 ,	ev = 2013 ,	reszveny = TSLA
+
+
+1.FELADAT
+set.seed(569)
+nx = 800
+v = matrix(c(113,abs(113 - 116), abs(113 - 116), 116), 2)
+w = chol(v)
+z1 = sqrt(-2*log(runif(nx)))*sin(runif(nx)*2*pi)
+z2 = sqrt(-2*log(runif(nx)))*cos(runif(nx)*2*pi)
+zm = matrix(c(z1,z2),ncol = 2)
+zn = 10*zm%*%w
+
+print(zn)
+
+
+/*paraméter becslés*/
+mean_zn = colMeans(zn)
+cov_zn = cov(zn)
+
+/*marginális eloszlás*/
+marginal_1 = list(mean = mean_zn[1], sd = sqrt(cov_zn[1, 1]))
+marginal_2 = list(mean = mean_zn[2], sd = sqrt(cov_zn[2, 2]))
+
+/*korrelációs mátrix*/
+cor_zn = cor(zn)
+
+
+2.FELADAT
+set.seed(569+137)
+n = 800  
+rho = 0.8 
+ 
+corr_matrix = matrix(c(1, rho, rho, 1), nrow = 2)
+ 
+sample_data = MASS::mvrnorm(n, mu = c(0, 0), Sigma = corr_matrix)
+ 
+plot(sample_data, main = "Exponenciális eloszlású mintarealizáció", xlab = "X", ylab = "Y")
+
+
+4.FELADAT
+set.seed(569+137)
+n = 800  
+rho = 0.8 
+ 
+corr_matrix = matrix(c(1, rho, rho, 1), nrow = 2)
+ 
+sample_data = MASS::mvrnorm(n, mu = c(0, 0), Sigma = corr_matrix)
+ 
+plot(sample_data, main = "Exponenciális eloszlású mintarealizáció", xlab = "X", ylab = "Y")
+ 
+ 
+set.seed(569+17)
+ 
+lambda = 2  
+time_interval = 1000 
+ 
+poisson_process = rpois(time_interval, lambda)
+ 
+plot(poisson_process, type = "s", main = "Poisson folyamat", xlab = "Idő", ylab = "Események")
+ 
+event_times = which(poisson_process > 0)
+interarrival_times = diff(event_times)
+mean_interarrival_time = mean(interarrival_times)
+ 
+print(mean_interarrival_time)
+
+
+
